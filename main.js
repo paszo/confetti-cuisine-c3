@@ -1,7 +1,14 @@
 const express = require('express');
 const homeController = require('./controllers/homeController');
 const errorController = require('./controllers/errorController');
+const subscribersController = require('./controllers/subscribersController');
 const layouts = require('express-ejs-layouts');
+const mongoose = require('mongoose');
+
+mongoose.Promise = global.Promise;
+
+const dbstring = process.env.CONFETTIDB;
+mongoose.connect(dbstring, {useNewUrlParser: true, useUnifiedTopology: true});
 
 
 const app = express();
@@ -16,8 +23,10 @@ app.use(layouts);
 
 app.get("/", homeController.showHome);
 app.get("/courses", homeController.showCourses);
-app.get("/contact", homeController.showSignUp);
-app.post("/contact", homeController.postedSignUpForm);
+app.get("/contact", subscribersController.getSubscriptionPage);
+// app.post("/contact", homeController.postedSignUpForm);
+app.get("/subscribers", subscribersController.getAllSubscribers);
+app.post("/subscribe", subscribersController.saveSubscriber);
 
 app.use(errorController.pageNotFoundError);
 app.use(errorController.internalServerError);
